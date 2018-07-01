@@ -27,9 +27,9 @@ int main(void)
         for (j = i - 1; j >= 0; j--) {  //create loop to start changing after (i-1)>=0
             if (valsToBeSorted[j] <= aTemp) //if current index [j] in array is less than aTemp break
                 break;
-            valsToBeSorted[j + 1] = valsToBeSorted[j];  //store new value into old array address
+            valsToBeSorted[j + 1] = valsToBeSorted[j];  //store new value into old array address(changing value position)
         }
-        valsToBeSorted [j + 1] = aTemp; //set temporary equal to new array address value
+        valsToBeSorted [j + 1] = aTemp; //set temporary equal to new array address value(save value for next change in number position)
     }
 
     // Print out the array
