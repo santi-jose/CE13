@@ -1,3 +1,4 @@
+//Jose Santiago jlsantia@ucsc.edu
 // **** Include libraries here ****
 // Standard libraries
 #include <stdio.h>
@@ -14,12 +15,12 @@
 //User Macros
 #define N_ITEMS 5
 
-int main(void)
-{
-    BOARD_Init();
     unsigned char vals[] = {rand(), rand(), rand(), rand(), rand()};
     int valsToBeSorted[] = {vals[0], vals[1], vals[2], vals[3], vals[4]};
 
+int main(void)
+{
+    BOARD_Init();
     // Sort the array in place.
     int i, j;
     for (i = 0; i < N_ITEMS; i++) { //use for loop to iterate through list of items (<0to <5)
