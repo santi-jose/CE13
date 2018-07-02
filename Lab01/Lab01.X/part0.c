@@ -1,6 +1,6 @@
 /*
  * File:   part0.c
- * Author: Jose Luis Santiago
+ * Author: Jose Luis Santiago jlsantia@ucsc.edu
  *
  * Created on June 27, 2018, 12:13 PM
  */
