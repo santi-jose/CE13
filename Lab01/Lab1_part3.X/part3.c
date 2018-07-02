@@ -1,4 +1,4 @@
-//  NAME?  UCSC EMAIL?
+//Jose Santiago jlsantia@ucsc.edu
 // **** Include libraries here ****
 // Standard libraries
 #include <stdio.h>
@@ -13,6 +13,7 @@
 #include <plib.h>
 
 // User libraries
+#include "SimpleMath.h"
 
 // **** Declare function prototypes ****
 
@@ -37,8 +38,20 @@ int main()
     
     /******************************** Your code goes below here *******************************/
     printf("\n\nTesting SimpleMath.h:\n");
+    
+    //tests for SquarePlusOne
+    double squarePlusOneResult = SquarePlusOne(10);
+    printf("SquarePlusOne(10) returned %f and should return %f\n",squarePlusOneResult,101.0000);
+    
+    double squarePlusOneResult2 = SquarePlusOne(5);
+    printf("SquarePlusOne(5) returned %f and should return %f\n",squarePlusOneResult2,26.0000);
 
-
+    //tests for DoubleLargest
+    double doubleLargestResult = DoubleLargest(3,5);
+    printf("DoubleLargest(3,5) returned %f and should return %f\n",doubleLargestResult,10.0000);
+    
+    double doubleLargestResult2 = DoubleLargest(-3,-10);
+    printf("DoubleLargest(-3,-10) returned %f and should return -6.0000\n",doubleLargestResult2);
 
     /*************************************************************************************************/
 
