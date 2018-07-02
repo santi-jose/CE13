@@ -19,7 +19,22 @@ int main(void)
     /***************************************************************************************************
      * Your code goes in between this comment and the following one with asterisks.
      **************************************************************************************************/
+    //Declare Variables
+    float fahr, celsius;
+    int lower, upper, step;
 
+    //Initialize Variables
+    lower = 0; //lower limit of temperature
+    upper = 300; //upper limit
+    step = 20; //step size 
+    fahr = lower;
+
+    //print table
+    while (fahr < upper) {
+        celsius = (5.0 / 9.0)*(fahr - 32.0);
+        printf("%7.1f %04.0f\n", (double) fahr, (double) celsius);
+        fahr = fahr + step;
+    }
 
 
     /***************************************************************************************************
