@@ -22,7 +22,7 @@ int main(void)
     //Declare Variables
     float fahr, celsius;
     int lower, upper, step;
-    char celsHead, fahrHead;
+    char celsHead, fahrHead, kelvHead;
 
     //Initialize Variables
     lower = 0; //lower limit of temperature
@@ -31,6 +31,7 @@ int main(void)
     fahr = lower;
     celsHead = 'C';
     fahrHead = 'F';
+    kelvHead = 'K';
 
     //print header
     printf("%5c %4c\n",(char)fahrHead,(char)celsHead);
@@ -40,6 +41,19 @@ int main(void)
         celsius = (5.0 / 9.0)*(fahr - 32.0);
         printf("%7.1f %04.0f\n", (double) fahr, (double) celsius);
         fahr = fahr + step;
+    }
+    
+    printf("\n");
+    
+    printf("%4c %7c\n",kelvHead,fahrHead);
+    
+    float kelv = lower;
+    
+    //print table
+    while (kelv < upper) {
+        fahr = (1.8)*(kelv - 273.0)+32.0;
+        printf("%07.3f %6.2f\n", (double) kelv, (double) fahr);
+        kelv = kelv + step;
     }
 
 
