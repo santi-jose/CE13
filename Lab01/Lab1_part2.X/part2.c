@@ -22,13 +22,19 @@ int main(void)
     //Declare Variables
     float fahr, celsius;
     int lower, upper, step;
+    char celsHead, fahrHead;
 
     //Initialize Variables
     lower = 0; //lower limit of temperature
     upper = 300; //upper limit
     step = 20; //step size 
     fahr = lower;
+    celsHead = 'C';
+    fahrHead = 'F';
 
+    //print header
+    printf("%5c %4c\n",(char)fahrHead,(char)celsHead);
+    
     //print table
     while (fahr < upper) {
         celsius = (5.0 / 9.0)*(fahr - 32.0);
