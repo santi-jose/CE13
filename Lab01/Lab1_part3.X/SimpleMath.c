@@ -1,6 +1,6 @@
 /*
  * File:   SimpleMath.c
- * Author: Jose Luis Santiago
+ * Author: Jose Luis Santiago jlsantia@ucsc.edu
  *
  * Created on July 2, 2018, 1:08 PM
  */
