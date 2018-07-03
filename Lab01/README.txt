@@ -1,3 +1,5 @@
+Jose Santiago jlsantia@ucsc.edu
+
 Values(1):
 238, 58, 62, 112, 43
 
@@ -40,3 +42,7 @@ operation (+) more obvious to readers.
 Line 35 from the original file, 34 in the current, had spaces added
 after semicolons, as well as before and after operations(+/>) for
 clarity.
+
+4. Hello world was pretty easy for me since i have prior c programming
+experience. I think breakpoints will be very useful going forward because
+they can help you identify bugs much quicker. 
