@@ -1,3 +1,4 @@
+//Jose Santiago jlsantia@ucsc.edu
 /*Module containing implementations of
  *Add two numbers and Increment by one*/
 #ifndef SIMPLEMATH_H
