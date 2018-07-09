@@ -21,6 +21,10 @@ double CelsiusToFahrenheit(double operand);
 double Average(double operand1, double operand2);
 double DegreesToRadians(double operand);
 
+//Macros
+#define PI 3.141592
+#define STANDARD_ERROR 0
+
 void CalculatorRun(void)
 {
     printf("\n\nWelcome to Jose's calculator program! Compiled at %s %s\n", __DATE__, __TIME__);
@@ -63,29 +67,34 @@ void CalculatorRun(void)
                 printf("The average is:%f\n", result);
             }
 
-        }            //checking for valid unary operations
+        }//checking for valid unary operations
         else if (operation == 'm' || operation == 'a' || operation == 'c' || operation == 'f' || operation == 't') {
             //prompt user to enter single operand
             printf("Enter operand:\n");
             scanf(" %f", &operand1);
             //print the operation they have requested
             printf("You entered:%c %f\n", operation, operand1);
+            //perform absolute value calculation and print result
             if (operation == 'a') {
                 double result = AbsoluteValue(operand1);
                 printf("The absolute value is:%f\n", result);
             }
             if (operation == 'c') {
+                //perform celsius to fahrenheit conversion and print result with message
                 double result = CelsiusToFahrenheit(operand1);
                 printf("Your result (from C->F) is:%f degrees Fahrenheit\n", result);
             }
+            //perform fahrenheit to celsius conversion and print result with message
             if (operation == 'f') {
                 double result = FahrenheitToCelsius(operand1);
                 printf("Your result (from F->C) is:%f degrees Celsius\n", result);
             }
+            //perform tangent operation with degrees as input and print out result with message
             if (operation == 't') {
                 double result = Tangent(operand1);
-                printf("Tan= %f\n", result);
+                printf("Tan(%f)= %f\n", operand1, result);
             }
+            //if no valid characters entered print error invalid operator
         } else {
             printf("error invalid operator\n");
         }
@@ -125,8 +134,11 @@ double Multiply(double operand1, double operand2)
  ********************************************************************************/
 double Divide(double operand1, double operand2)
 {
+    //check for invalid denominator
     if (operand2 == 0) {
-        printf("invalid denominator\n");
+        printf("Error invalid denominator\n");
+        return STANDARD_ERROR;
+        //else perform division
     } else {
         double result = operand1 / operand2;
         return result;
@@ -138,9 +150,11 @@ double Divide(double operand1, double operand2)
  ********************************************************************************/
 double AbsoluteValue(double operand)
 {
+    //if the number is negative multiply by -1 to get absolute value
     if (operand < 0) {
         double result = operand * -1;
         return result;
+        //else return the operand as it is, 0 or positive
     } else {
         return operand;
     }
@@ -177,9 +191,19 @@ double Average(double operand1, double operand2)
  * Define the Tangent function that takes input in degrees.
  ********************************************************************************/
 double Tangent(double operand)
+//Takes the tangent of the converted degree user input
 {
-    double result = DegreesToRadians(operand);
-    
+    //check if tangent is invalid at degree input(90N)
+    if (((int)operand % (int)90.0) == 0) {
+        printf("Tangent is undefined here\n");
+        return STANDARD_ERROR;
+    } 
+    //else turn into radians, then take tangent, and return result
+    else {
+        double result = DegreesToRadians(operand);
+        result = tan(result);
+        return result;
+    }
 }
 
 /*********************************************************************************
@@ -192,8 +216,10 @@ double Round(double operand)
     //  Your code here
 }
 
-//degrees to radians helper function
-double DegreesToRadians(double operand){
-    double result = operand * (PI/180);
+//degrees to radians helper function, converts degrees user input into radians for tangent function
+
+double DegreesToRadians(double operand)
+{
+    double result = operand * (PI / 180);
     return result;
 }
