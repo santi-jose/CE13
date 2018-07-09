@@ -194,11 +194,11 @@ double Tangent(double operand)
 //Takes the tangent of the converted degree user input
 {
     //check if tangent is invalid at degree input(90N)
-    if (((int)operand % (int)90.0) == 0) {
+    if (((int) operand % (int) 90.0) == 0) {
         printf("Tangent is undefined here\n");
         return STANDARD_ERROR;
-    } 
-    //else turn into radians, then take tangent, and return result
+    }
+        //else turn into radians, then take tangent, and return result
     else {
         double result = DegreesToRadians(operand);
         result = tan(result);
