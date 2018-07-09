@@ -19,6 +19,7 @@ double Divide(double opearand1, double operand2);
 double Subtract(double operand1, double operand2);
 double CelsiusToFahrenheit(double operand);
 double Average(double operand1, double operand2);
+double DegreesToRadians(double operand);
 
 void CalculatorRun(void)
 {
@@ -175,9 +176,10 @@ double Average(double operand1, double operand2)
 /*********************************************************************************
  * Define the Tangent function that takes input in degrees.
  ********************************************************************************/
-double Tangent(double operand1)
+double Tangent(double operand)
 {
-
+    double result = DegreesToRadians(operand);
+    
 }
 
 /*********************************************************************************
@@ -190,5 +192,8 @@ double Round(double operand)
     //  Your code here
 }
 
-
-
+//degrees to radians helper function
+double DegreesToRadians(double operand){
+    double result = operand * (PI/180);
+    return result;
+}
