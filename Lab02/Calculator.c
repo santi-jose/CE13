@@ -20,6 +20,7 @@ double Subtract(double operand1, double operand2);
 double CelsiusToFahrenheit(double operand);
 double Average(double operand1, double operand2);
 double DegreesToRadians(double operand);
+double Round(double operand);
 
 //Macros, constants defined for arithmetic and error values
 #define PI 3.141592
@@ -206,10 +207,10 @@ double Tangent(double operand)
  * In order to receive the extra credit your calculator MUST ALSO CORRECTLY utilize
  * this function.
  ********************************************************************************/
-//double Round(double operand)
-//{
-//    //  Your code here
-//}
+double Round(double operand)
+{
+    return STANDARD_ERROR;
+}
 
 //degrees to radians helper function, converts degrees user input into radians for tangent function
 
