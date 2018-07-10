@@ -21,7 +21,7 @@ double CelsiusToFahrenheit(double operand);
 double Average(double operand1, double operand2);
 double DegreesToRadians(double operand);
 
-//Macros
+//Macros, constants defined for arithmetic and error values
 #define PI 3.141592
 #define STANDARD_ERROR 0
 
@@ -40,9 +40,9 @@ void CalculatorRun(void)
             //prompt user for operands necessary for binary arithmetic operations
             printf("You input: %c\n", operation); //printing operation input
             printf("Enter operand:\n"); //prompt first operand
-            scanf(" %f", &operand1); //take first operand
+            scanf(" %lf", &operand1); //take first operand
             printf("Enter second operand:\n"); //prompt second operand
-            scanf(" %f", &operand2); //take second operand
+            scanf(" %lf", &operand2); //take second operand
             printf("You entered:%f %c %f\n", operand1, operation, operand2); //print whole operation
 
             //perform appropriate binary arithmetic operations
@@ -71,7 +71,7 @@ void CalculatorRun(void)
         else if (operation == 'm' || operation == 'a' || operation == 'c' || operation == 'f' || operation == 't') {
             //prompt user to enter single operand
             printf("Enter operand:\n");
-            scanf(" %f", &operand1);
+            scanf(" %lf", &operand1);
             //print the operation they have requested
             printf("You entered:%c %f\n", operation, operand1);
             //perform absolute value calculation and print result
@@ -211,10 +211,10 @@ double Tangent(double operand)
  * In order to receive the extra credit your calculator MUST ALSO CORRECTLY utilize
  * this function.
  ********************************************************************************/
-double Round(double operand)
-{
-    //  Your code here
-}
+//double Round(double operand)
+//{
+//    //  Your code here
+//}
 
 //degrees to radians helper function, converts degrees user input into radians for tangent function
 
