@@ -51,8 +51,13 @@ void CalculatorRun(void)
                 printf("Your result is:%f\n", result);
             }
             if (operation == '/') {
-                double result = Divide(operand1, operand2);
-                printf("Your result is:%f\n", result);
+                if (operand2 == 0) {
+                    printf("Error invalid denominator\n");
+                    //else perform division
+                } else {
+                    double result = Divide(operand1, operand2);
+                    printf("Your result is:%f\n", result);
+                }
             }
             if (operation == '+') {
                 double result = Add(operand1, operand2);
@@ -91,8 +96,13 @@ void CalculatorRun(void)
             }
             //perform tangent operation with degrees as input and print out result with message
             if (operation == 't') {
-                double result = Tangent(operand1);
-                printf("Tan(%f)= %f\n", operand1, result);
+                //check if tangent is invalid at degree input(90N)
+                if (((int) operand1 % (int) 90.0) == 0) {
+                    printf("Tangent is undefined here\n");
+                } else {
+                    double result = Tangent(operand1);
+                    printf("Tan(%f)= %f\n", operand1, result);
+                }
             }
             //if no valid characters entered print error invalid operator
         } else {
@@ -134,15 +144,8 @@ double Multiply(double operand1, double operand2)
  ********************************************************************************/
 double Divide(double operand1, double operand2)
 {
-    //check for invalid denominator
-    if (operand2 == 0) {
-        printf("Error invalid denominator\n");
-        return STANDARD_ERROR;
-        //else perform division
-    } else {
-        double result = operand1 / operand2;
-        return result;
-    }
+    double result = operand1 / operand2;
+    return result;
 }
 
 /********************************************************************************
@@ -193,17 +196,9 @@ double Average(double operand1, double operand2)
 double Tangent(double operand)
 //Takes the tangent of the converted degree user input
 {
-    //check if tangent is invalid at degree input(90N)
-    if (((int) operand % (int) 90.0) == 0) {
-        printf("Tangent is undefined here\n");
-        return STANDARD_ERROR;
-    }
-        //else turn into radians, then take tangent, and return result
-    else {
-        double result = DegreesToRadians(operand);
-        result = tan(result);
-        return result;
-    }
+    double result = DegreesToRadians(operand);
+    result = tan(result);
+    return result;
 }
 
 /*********************************************************************************
