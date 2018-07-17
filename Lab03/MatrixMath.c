@@ -20,7 +20,7 @@ void MatrixPrint(float mat[3][3]){
     int j=0;
     for(i=0;i<3;i++){
         for(j=0;j<3;j++){
-            printf("%4f   ",(double)mat[i][j]); //print single element of matrix
+            printf("%4.2f\t",(double)mat[i][j]); //print single element of matrix
         }
         printf("\n");
     }
@@ -63,10 +63,13 @@ void MatrixMultiply(float mat1[3][3], float mat2[3][3], float result[3][3])
 {
     int i;
     int j;
+    int k;
     //nest for loops to iterate through matrices
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
-            result[1][j] = (mat1[i][j] * mat2[j][i]) + result[1][j]; //perform and store matrix multiplication into resultant vector
+            for(k=0;k<3;k++){
+            result[i][j] = (mat1[i][k] * mat2[k][j]) + result[i][j]; //perform and store matrix multiplication into resultant matrix  
+            }
         }
     }
 }
