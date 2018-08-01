@@ -124,7 +124,15 @@ ListItem *LinkedListCreateAfter(ListItem *item, char *data)
 
 int LinkedListSwapData(ListItem *firstItem, ListItem *secondItem)
 {
-    return NULL;
+    if(firstItem==NULL||secondItem==NULL){
+        return STANDARD_ERROR;
+    }
+    ListItem * temp = (ListItem *)malloc(sizeof(ListItem));//declare node to store temporary data
+    temp->data=firstItem->data;
+    firstItem->data=secondItem->data;
+    secondItem->data=temp->data;
+    free(temp); //free data allocated for temp
+    return  SUCCESS;
 }
 
 int LinkedListSort(ListItem *list)
