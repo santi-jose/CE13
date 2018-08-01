@@ -36,7 +36,17 @@ char *LinkedListRemove(ListItem *item) //function removes an item from list
     if (item == NULL) { //check it given a NULL pointer
         printf("Error input NULL pointer\n");
         return NULL;
-    } else {
+    } else if(item->previousItem==NULL){    //if at the head of the list
+        item->nextItem->previousItem=NULL;
+        item->nextItem=NULL;
+        return item->data;
+    }
+    else if(item->nextItem==NULL){  //if at the end of a list
+        item->previousItem->nextItem=NULL;
+        item->previousItem=NULL;
+        return item->data;
+    }
+    else {  //when inside the list
         ListItem *temp; //create temporary listitem pointer to store item for removal's address
         item->previousItem->nextItem = item->nextItem; //
         item->nextItem->previousItem = item->previousItem;
