@@ -138,7 +138,19 @@ int main(void)
     printf("swapped list:\n");
     LinkedListSwapData(last_animal,second_animal);
     LinkedListPrint(animal_list);
-
+    
+    //add more stuff to your lists to test remove again
+    animal_list=LinkedListCreateAfter(animal_list,"Cat");
+    animal_list=LinkedListCreateAfter(animal_list,"Dog");
+    animal_list=LinkedListCreateAfter(animal_list,"Bird");
+    printf("New animal list:\n");
+    LinkedListPrint(animal_list);
+    
+    //remove former last animal, Moose, from list
+    printf("Removing Moose:\n");
+    LinkedListRemove(last_animal);
+    LinkedListPrint(animal_list);
+    
 
 
 
