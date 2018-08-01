@@ -33,23 +33,27 @@ ListItem *LinkedListNew(char *data)
 
 char *LinkedListRemove(ListItem *item) //function removes an item from list
 {
+    ListItem *temp; //create temporary listitem pointer to store item for removal's address
     if (item == NULL) { //check it given a NULL pointer
         printf("Error input NULL pointer\n");
         return NULL;
-    } else if(item->previousItem==NULL){    //if at the head of the list
-        item->nextItem->previousItem=NULL;
-        item->nextItem=NULL;
-        return item->data;
-    }
-    else if(item->nextItem==NULL){  //if at the end of a list
-        item->previousItem->nextItem=NULL;
-        item->previousItem=NULL;
-        return item->data;
-    }
-    else {  //when inside the list
-        ListItem *temp; //create temporary listitem pointer to store item for removal's address
-        item->previousItem->nextItem = item->nextItem; //
+    } else if (item->previousItem == NULL) { //if at the head of the list
+        item->nextItem->previousItem = NULL;
+        item->nextItem = NULL;
+        temp = item; //copy item into temporary
+        free(item); //free memory that had item
+        return temp->data;
+    } else if (item->nextItem == NULL) { //if at the end of a list
+        item->previousItem->nextItem = NULL;
+        item->previousItem = NULL;
+        temp = item; //copy item into temporary
+        free(item); //free memory that had the item
+        return temp->data;
+    } else { //when inside the list
+        item->previousItem->nextItem = item->nextItem;
         item->nextItem->previousItem = item->previousItem;
+        item->nextItem = NULL;
+        item->previousItem = NULL;
         temp = item; //copy ListItem pointer to temp
         free(item); //free data stored for listitem item
         return temp->data;
@@ -58,33 +62,31 @@ char *LinkedListRemove(ListItem *item) //function removes an item from list
 
 int LinkedListSize(ListItem *list)
 {
-    if(list == NULL){   //return zero if given a NULL
+    if (list == NULL) { //return zero if given a NULL
         return 0;
     }
-    while(list->previousItem!=NULL){    //go to head node if not in head node
+    while (list->previousItem != NULL) { //go to head node if not in head node
         list = list->previousItem;
     }
-    int count=1;    //start count variable at 1 for indexing
-    while(list->nextItem!=NULL){    //while not at tail node 
-        list = list->nextItem;  //go to next list item
-        count++;    //increment count
+    int count = 1; //start count variable at 1 for indexing
+    while (list->nextItem != NULL) { //while not at tail node 
+        list = list->nextItem; //go to next list item
+        count++; //increment count
     }
-    return count;   //return count
+    return count; //return count
 }
 
 ListItem *LinkedListGetFirst(ListItem *list)
 {
-    if(list==NULL){ //if given a null pointer return NULL
-    return NULL;
-    }
-    else if(list->previousItem==NULL){  //else if already at head, return same pointer
+    if (list == NULL) { //if given a null pointer return NULL
+        return NULL;
+    } else if (list->previousItem == NULL) { //else if already at head, return same pointer
         return list;
-    }
-    else{   //else traverse to the head of the list
-        while(list->previousItem!=NULL){
-            list=list->previousItem;
+    } else { //else traverse to the head of the list
+        while (list->previousItem != NULL) {
+            list = list->previousItem;
         }
-        return list;    //return head of list
+        return list; //return head of list
     }
 }
 
@@ -124,15 +126,15 @@ ListItem *LinkedListCreateAfter(ListItem *item, char *data)
 
 int LinkedListSwapData(ListItem *firstItem, ListItem *secondItem)
 {
-    if(firstItem==NULL||secondItem==NULL){
+    if (firstItem == NULL || secondItem == NULL) {
         return STANDARD_ERROR;
     }
-    ListItem * temp = (ListItem *)malloc(sizeof(ListItem));//declare node to store temporary data
-    temp->data=firstItem->data;
-    firstItem->data=secondItem->data;
-    secondItem->data=temp->data;
+    ListItem * temp = (ListItem *) malloc(sizeof (ListItem)); //declare node to store temporary data
+    temp->data = firstItem->data;
+    firstItem->data = secondItem->data;
+    secondItem->data = temp->data;
     free(temp); //free data allocated for temp
-    return  SUCCESS;
+    return SUCCESS;
 }
 
 int LinkedListSort(ListItem *list)
@@ -156,7 +158,7 @@ int LinkedListPrint(ListItem *list)
         printf("%s\n", list->data);
         list = list->nextItem;
     }
-    printf("%s\n",list->data);  //print last item in list when list->nextItem is NULL
+    printf("%s\n", list->data); //print last item in list when list->nextItem is NULL
     return SUCCESS;
 }
 
