@@ -56,7 +56,9 @@ int main(void)
     ListItem * animal_list = LinkedListNew("Elephant");
     ListItem * first_animal = animal_list; //save head node for getfirst testing
     animal_list = LinkedListCreateAfter(animal_list, "Moose");
+    ListItem * second_animal = animal_list; //save pointer to second animal, moose
     animal_list = LinkedListCreateAfter(animal_list, "Cuttlefish");
+    ListItem * last_animal = animal_list;   //save pointer to final animal in list
     LinkedListPrint(animal_list);
 
     animal_size = LinkedListSize(animal_list);
@@ -78,8 +80,10 @@ int main(void)
     printf("Adding more items to first list...\n");
     ListItem * first_myLI = myLI;
     myLI = LinkedListCreateAfter(myLI, "SECOND_ITEM");
-    myLI = LinkedListCreateAfter(myLI, "THIRST_ITEM");
+    myLI = LinkedListCreateAfter(myLI, "THIRD_ITEM");
+    ListItem * third_myLI = myLI;
     myLI = LinkedListCreateAfter(myLI, "FOURTH_ITEM");
+    ListItem * last_myLI=myLI;  //store last item in myLI
     printf("Printing new list of items:\n");
     LinkedListPrint(myLI);
 
@@ -118,8 +122,22 @@ int main(void)
     }
     printf("New item list:\n");
     LinkedListPrint(myLI);
+    
+    
+    printf("Now commencing testing for swap:\n");
+    //swap second data with last data in myLI
+    printf("We'll swap items in this list:\n");
+    LinkedListPrint(myLI);
+    printf("swap second item with third item:\n");
+    LinkedListSwapData(last_myLI,third_myLI);
+    LinkedListPrint(myLI);
 
-
+    //swap first with second data in animal_list
+    printf("swap the order of this list:\n");
+    LinkedListPrint(animal_list);
+    printf("swapped list:\n");
+    LinkedListSwapData(last_animal,second_animal);
+    LinkedListPrint(animal_list);
 
 
 
