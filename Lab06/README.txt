@@ -1,5 +1,5 @@
 Jose Santiago jlsantia@ucsc.edu
-
+Magic Number: 0x0A0B00
 Collaborator: Karla
 
     In this lab we began programming our uno32. We learned to code our inputs
