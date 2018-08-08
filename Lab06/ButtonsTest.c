@@ -12,6 +12,9 @@
 #include "Buttons.h"
 #include "Leds.h"
 
+//user variables
+static uint8_t buttonEvents;
+
 int main(void)
 {
     BOARD_Init();
@@ -28,13 +31,25 @@ int main(void)
 
     ButtonsInit();
     LEDS_INIT();
-    
-    while(1){
-    int button_states = BUTTON_STATES();
-    LEDS_SET(button_states);
+
+//    while (1) {
+//        int button_states = BUTTON_STATES();
+//        LEDS_SET(button_states);
+//    }
+
+    while (1) {
+        if (buttonEvents) {
+            if (buttonEvents & BUTTON_EVENT_1UP) {
+                puts("BUTTON_EVENT_1UP");
+            }
+            if (buttonEvents & BUTTON_EVENT_1DOWN) {
+                puts("BUTTON_EVENT_1DOWN");
+            }
+            buttonEvents = BUTTON_EVENT_NONE;
+        }
     }
     
-    
+
     while (1);
 }
 
@@ -48,5 +63,5 @@ void __ISR(_TIMER_1_VECTOR, IPL4AUTO) Timer1Handler(void)
     IFS0CLR = 1 << 4;
 
     // Check for events.
-    //int buttonEvents = ButtonsCheckEvents(BUTTON_STATES());
+    buttonEvents = ButtonsCheckEvents(BUTTON_STATES());
 }
