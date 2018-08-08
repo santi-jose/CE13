@@ -55,7 +55,7 @@ int main(void)
     //initialize OLED
     OledInit();
 
-    //event checker
+    //event checker initial values
     AdcResult.event = FALSE;
     AdcResult.value = 0;
 
