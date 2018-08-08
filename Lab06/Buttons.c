@@ -1,6 +1,6 @@
 /*
  * File:   Buttons.c
- * Author: Jose Luis Santiago
+ * Author: Jose Luis Santiago jlsantia@ucsc.edu
  *
  * Created on August 6, 2018, 3:57 PM
  */
