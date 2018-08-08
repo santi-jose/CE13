@@ -1,3 +1,5 @@
+//Jose Santiago jlsantia@ucsc.edu
+
 // **** Include libraries here ****
 // Standard libraries
 
