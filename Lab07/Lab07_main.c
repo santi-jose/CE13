@@ -41,8 +41,9 @@ typedef enum {
 //OvenData struct
 
 typedef struct {
-    OvenState state;
-    char * mode;
+    OvenState state;    //storage for state enums
+    OvenMode mode;  //storage for mode enums
+    char * modeString;  //storage for modeString
     int temp; //storage for temperature value for updateOLED()
     int minutes; //storage for minutes value for updateOLED()
     int seconds; //storage for seconds value for updateOLED()
@@ -58,6 +59,7 @@ typedef struct {
     int ledsEighth; //stores an eighth of total cookTime to light proper LED's
     int ledsCount; //counter for LED's to know if an eighth of the time has passed
     uint8_t ledsOn; //variable to store the LED_SET() argument value
+    int firstLEDCount;  //variable I use to make sure my LED's are 
 
     //add more members to this struct
 } OvenData;
@@ -85,13 +87,13 @@ void updateOLED(OvenData ovenData)
 {
     //check for ovenData.mode to know what HUD to print
 
-    if (ovenData.mode == "BAKE") {
+    if (ovenData.mode == BAKE) {
         printBakeHUD(ovenData);
     }
-    if (ovenData.mode == "TOAST") {
+    if (ovenData.mode == TOAST){
         printToastHUD(ovenData);
     }
-    if (ovenData.mode == "BROIL") {
+    if (ovenData.mode == BROIL) {
         printBroilHUD(ovenData);
     }
 }
@@ -196,7 +198,7 @@ int main()
     AdcInit();
 
     //give ovenData initial values
-    ovenData.mode = "BAKE";
+    ovenData.mode = BAKE;
     ovenData.temp = 350;
     ovenData.minutes = 0;
     ovenData.seconds = 0;
@@ -233,8 +235,9 @@ void __ISR(_TIMER_2_VECTOR, ipl4auto) TimerInterrupt100Hz(void)
 
 void printBakeHUD(OvenData ovenData)
 {
-    //print HUD for bake mode
-
+    //give modeString proper MODE
+    ovenData.modeString = "BAKE";
+    
     //add check for time or temp (if ovenData.select == TIME)
     if (ovenData.selectOption == TIME) {
 
@@ -242,9 +245,9 @@ void printBakeHUD(OvenData ovenData)
         sprintf(printHUD,
                 "|****|\tMode:%s \n"
                 "|____|\t>Time:%d:%d \n"
-                "|----|\tTemp:%d F    \n"
+                "|----|\tTemp:%d F\xF8\n"
                 "|____|\t\n",
-                ovenData.mode,
+                ovenData.modeString,
                 ovenData.minutes, ovenData.seconds,
                 ovenData.temp);
         OledDrawString(printHUD);
@@ -255,9 +258,9 @@ void printBakeHUD(OvenData ovenData)
         sprintf(printHUD,
                 "|****|\tMode:%s \n"
                 "|____|\tTime:%d:%d \n"
-                "|----|\t>Temp:%d   F\n"
+                "|----|\t>Temp:%d \xF8\n"
                 "|____|\t\n",
-                ovenData.mode,
+                ovenData.modeString,
                 ovenData.minutes, ovenData.seconds,
                 ovenData.temp);
         OledDrawString(printHUD);
@@ -267,14 +270,16 @@ void printBakeHUD(OvenData ovenData)
 
 void printBroilHUD(OvenData ovenData)
 {
+    //give modeString the proper MODE
+    ovenData.modeString = "BROIL";
 
     //print broil HUD, no option to change temp, just time, temp is static and visible
     sprintf(printHUD,
             "|****|\tMode:%s \n"
             "|____|\t>Time:%d:%d \n"
-            "|----|\tTemp:350 F   \n"
+            "|----|\tTemp:350 F\xF8\n"
             "|____|\t\n",
-            ovenData.mode,
+            ovenData.modeString,
             ovenData.minutes, ovenData.seconds);
     OledDrawString(printHUD);
     OledUpdate();
@@ -282,15 +287,17 @@ void printBroilHUD(OvenData ovenData)
 
 void printToastHUD(OvenData ovenData)
 {
+    //give modeString the proper string for MODE
+    ovenData.modeString = "TOAST";
+
     //print Toast HUD, only user input is time, temp not visible
     sprintf(printHUD,
             "|****|\tMode:%s \n"
             "|____|\t>Time:%d:%d \n"
             "|----|              \n"
             "|____|              \n",
-            ovenData.mode,
-            ovenData.minutes, ovenData.seconds,
-            ovenData.temp);
+            ovenData.modeString,
+            ovenData.minutes, ovenData.seconds);
     OledDrawString(printHUD);
     OledUpdate();
 }
@@ -303,19 +310,19 @@ void buttonEvent3Down(void)
 
 void shortPress(void)
 {
-    if (ovenData.mode == "BAKE") { //cycle through modes
+    if (ovenData.mode == BAKE) { //cycle through modes
         ovenData.selectOption = TIME; //set to default select option when going to BAKE
-        ovenData.mode = "TOAST";
-    } else if (ovenData.mode == "TOAST") {
-        ovenData.mode = "BROIL";
+        ovenData.mode = TOAST;
+    } else if (ovenData.mode == TOAST) {
+        ovenData.mode = TOAST;
     } else {
-        ovenData.mode = "BAKE";
+        ovenData.mode = BAKE;
     }
 }
 
 void longPress(void)
 {
-    if (ovenData.mode == "BAKE") {
+    if (ovenData.mode == BAKE) {
         if (ovenData.selectOption == TIME) { //if TIME currently selected
             ovenData.selectOption = TEMP; //change to TEMP
         } else if (ovenData.selectOption == TEMP) { //else if TEMP currently selected
@@ -334,7 +341,7 @@ void ADCchanged(void)
     //check for selection option 
     if (ovenData.selectOption == TIME) { //time conversion
         ovenData.initialCookTime = ovenData.adcRead; //save cookTime for countdown
-        ovenData.ledsEighth = (ovenData.initialCookTime)*(1 / 8);
+        ovenData.ledsEighth = ((ovenData.initialCookTime) / 8)+1; //trying integer math top get an eighth of cookTime
         ovenData.minutes = ovenData.adcRead / 60; //minutes
         ovenData.seconds = (ovenData.adcRead % 60) + 1; //seconds
     } else if (ovenData.selectOption == TEMP) { //temperature conversion
@@ -357,14 +364,15 @@ void countdown(void)
     if (ovenData.initialCookTime > 0) {
         ovenData.initialCookTime--; //decrement cook time
         ovenData.minutes = ovenData.initialCookTime / 60; //convert minutes
-        ovenData.seconds = ovenData.initialCookTime % 60; //convert seconds
+        ovenData.seconds = (ovenData.initialCookTime % 60) + 1; //convert seconds
         updateOLED(ovenData); //updateOLED
-        LEDS_SET(ovenData.ledsOn); //turn on appropriate LED's
-        ovenData.ledsCount++;
+        ovenData.ledsCount++;       
         if (ovenData.ledsCount == ovenData.ledsEighth) { //if ledsCount reaches an eighth of the total, reset the count and update the LED bar
             ovenData.ledsCount = 0; //reset ledsCount
-            ovenData.ledsOn = ovenData.ledsOn >> 1; //shift the bits to show an eighth of the time has passed
+            ovenData.ledsOn = ovenData.ledsOn << 1; //shift the bits to show an eighth of the time has passed
+            LEDS_SET(ovenData.ledsOn); //update LEDS
         }
+        LEDS_SET(ovenData.ledsOn);  //update LEDS outside loop
         ovenData.state = COOKING; //go to COOKING state to continue countdown
     } else { //countdown is over
         reset();
@@ -389,4 +397,3 @@ void button4Pending(void)
     ovenData.buttonEventStart = ovenData.globalTime; //store time for buttonEventStart
     ovenData.state = RESET_PENDING; //change to RESET_PENDING
 }
-
