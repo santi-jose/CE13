@@ -75,7 +75,7 @@ void ADCchanged(void); //function that updates OLED with user input from ADC. De
 void buttonEvent4Down(void); //perform buttonEvent4Down operations
 void countdown(void); //performs countdown operation
 void reset(void); //function resets ovenData
-void button4Pending(void);  //function performs transition from COOKING to PENDING_RESET via btnEvent flag
+void button4Pending(void); //function performs transition from COOKING to PENDING_RESET via btnEvent flag
 
 /*This function will update your OLED to reflect the state .*/
 void updateOLED(OvenData ovenData)
@@ -111,13 +111,13 @@ void runOvenSM(void) //state machine
 
     case (RESET_PENDING):
         if (ovenData.buttonEvent == BUTTON_EVENT_4UP) {
-            ovenData.state = COOKING;   //go back to cooking if just pressed btn4
+            ovenData.state = COOKING; //go back to cooking if just pressed btn4
         }
         if (ovenData.timerEvent == TRUE) {
             ovenData.buttonDownTime = ovenData.globalTime - ovenData.buttonEventStart; //store value of time button4 was down
-            if (ovenData.buttonDownTime >= LONG_PRESS) {    //if buttonDownTime >= 1 SEC
-                reset();    //reset the ovenData
-                ovenData.timerEvent = FALSE;    //reset timerEvent flag
+            if (ovenData.buttonDownTime >= LONG_PRESS) { //if buttonDownTime >= 1 SEC
+                reset(); //reset the ovenData
+                ovenData.timerEvent = FALSE; //reset timerEvent flag
                 ovenData.state = SETUP; //go back to SETUP state
             } else {
                 updateOLED(ovenData);
@@ -326,22 +326,19 @@ void longPress(void)
 
 void ADCchanged(void)
 {
-    ovenData.adcRead = AdcRead();
-    ovenData.adcRead >> 2;
+    ovenData.adcRead = AdcRead(); //add one to adcRead 
+    ovenData.adcRead = ovenData.adcRead >> 2;   //get top 8 bits
 
     //check for selection option 
-    if (ovenData.selectOption == TIME) {
-        ovenData.adcRead + 1;
-        ovenData.initialCookTime = ovenData.adcRead;
-        ovenData.minutes = ovenData.adcRead / 60;
-        ovenData.seconds = ovenData.adcRead % 60;
-        ovenData.state = SETUP;
-    } else if (ovenData.selectOption == TEMP) {
+    if (ovenData.selectOption == TIME) {    //time conversion
+        ovenData.initialCookTime = ovenData.adcRead;    //save cookTime for countdown
+        ovenData.minutes = ovenData.adcRead / 60;   //minutes
+        ovenData.seconds = (ovenData.adcRead % 60)+1;   //seconds
+    } else if (ovenData.selectOption == TEMP) { //temperature conversion
         ovenData.temp = ovenData.adcRead + 300;
-
     }
-    ovenData.state = SETUP;
-    updateOLED(ovenData);
+    ovenData.state = SETUP; //go back to SETUP
+    updateOLED(ovenData);   //update OLED
 }
 
 void buttonEvent4Down(void)
@@ -368,9 +365,9 @@ void countdown(void)
 
 void reset(void)
 { //resetting ovenData to initial values
-    ovenData.temp = 0;
+    ovenData.temp = 350;
     ovenData.minutes = 0;
-    ovenData.seconds = 0;
+    ovenData.seconds = 1;
     ovenData.state = SETUP;
     ovenData.selectOption = TIME;
 }
