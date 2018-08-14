@@ -20,7 +20,8 @@
 // **** Set any macros, preprocessor directives, and typedefs here ****
 //macros
 #define LONG_PRESS 5    //long press is 1 second. 5HZ conversion = 5
-
+#define TIME 10
+#define TEMP 11
 
 //Oled display print string array
 char printHUD[100];
@@ -53,6 +54,7 @@ typedef struct {
     int buttonDownTime; //storage for total button3 down time
     int buttonEventStart; //globalTime storage when button3 is pressed
     int timerEvent; //timer event flag
+    int selectOption; //stores our current select option: TIME or TEMP
 
     //add more members to this struct
 } OvenData;
@@ -67,13 +69,18 @@ void printBakeHUD(OvenData); //function that prints BAKE HUD
 void printBroilHUD(OvenData); //function that prints BROIL HUD
 void printToastHUD(OvenData); //function that prints TOAST HUD
 void buttonEvent3Down(void); //function that performs transition for buttonEvent3Down flag
+void longPress(void); //performs long press operation: change SELECT OPTION
+void shortPress(void); //performs short press operation: changes MODES
+void ADCchanged(void); //function that updates OLED with user input from ADC. Determines whether to update TIME or TEMP as well
+void buttonEvent4Down(void); //perform buttonEvent4Down operations
+void countdown(void); //performs countdown operation
+void reset(void); //function resets ovenData
+void button4Pending(void);  //function performs transition from COOKING to PENDING_RESET via btnEvent flag
 
 /*This function will update your OLED to reflect the state .*/
 void updateOLED(OvenData ovenData)
 {
     //check for ovenData.mode to know what HUD to print
-
-    //GOTTA FIX THE MODE ENUM TO BE ABLE TO CHANGE MODES WITH BUTTONS
 
     if (ovenData.mode == "BAKE") {
         printBakeHUD(ovenData);
@@ -92,23 +99,40 @@ void runOvenSM(void) //state machine
 {
     //write your SM logic here.
     switch (ovenData.state) {
-    case(COOKING):
+    case (COOKING):
+        if (ovenData.timerEvent == TRUE) { //check for timer event
+            countdown();
+            ovenData.timerEvent = FALSE; //reset timerEvent flag
+        }
+        if (ovenData.buttonEvent == BUTTON_EVENT_4DOWN) {
+            button4Pending();
+        }
         break;
 
     case (RESET_PENDING):
+        if (ovenData.buttonEvent == BUTTON_EVENT_4UP) {
+            ovenData.state = COOKING;   //go back to cooking if just pressed btn4
+        }
+        if (ovenData.timerEvent == TRUE) {
+            ovenData.buttonDownTime = ovenData.globalTime - ovenData.buttonEventStart; //store value of time button4 was down
+            if (ovenData.buttonDownTime >= LONG_PRESS) {    //if buttonDownTime >= 1 SEC
+                reset();    //reset the ovenData
+                ovenData.timerEvent = FALSE;    //reset timerEvent flag
+                ovenData.state = SETUP; //go back to SETUP state
+            } else {
+                updateOLED(ovenData);
+            }
+        }
+
         break;
 
     case (SELECTOR_CHANGE_PENDING):
         if (ovenData.buttonEvent == BUTTON_EVENT_3UP) {
             ovenData.buttonDownTime = ovenData.globalTime - ovenData.buttonEventStart; //calculate btn3 down time
             if (ovenData.buttonDownTime < LONG_PRESS) { //if button was down for a short press
-                if (ovenData.mode == "BAKE") { //cycle through modes
-                    ovenData.mode = "TOAST";
-                } else if (ovenData.mode == "TOAST") {
-                    ovenData.mode = "BROIL";
-                } else {
-                    ovenData.mode = "BAKE";
-                }
+                shortPress();
+            } else {
+                longPress();
             }
             updateOLED(ovenData); //update OLED
             ovenData.state = SETUP; //change state back to SETUP
@@ -118,20 +142,16 @@ void runOvenSM(void) //state machine
     case (SETUP):
         //check to see if ADC has been changed
         if (AdcChanged() == TRUE) { //if TRUE update adcRead value for either mode, time or temp
-            ovenData.adcRead = AdcRead();
-            ovenData.adcRead >> 2;
-            ovenData.minutes = ovenData.adcRead / 60;
-            ovenData.seconds = ovenData.adcRead % 60;
-            ovenData.state = SETUP;
-            updateOLED(ovenData);
+            ADCchanged();
         }
         if (ovenData.buttonEvent == BUTTON_EVENT_3DOWN) {
-
             buttonEvent3Down();
         }
-        //            else{
-        //                updateOLED(ovenData);
-        //            }
+        if (ovenData.buttonEvent == BUTTON_EVENT_4DOWN) {
+            buttonEvent4Down();
+        } else {
+            updateOLED(ovenData); //updateOLED when in SETUP
+        }
         break;
     }
 }
@@ -178,6 +198,7 @@ int main()
     ovenData.minutes = 0;
     ovenData.seconds = 0;
     ovenData.state = SETUP;
+    ovenData.selectOption = TIME;
 
     while (1) {
         // Add main loop code here
@@ -213,27 +234,43 @@ void printBakeHUD(OvenData ovenData)
     //print HUD for bake mode
 
     //add check for time or temp (if ovenData.select == TIME)
+    if (ovenData.selectOption == TIME) {
 
-    //Bake HUD with possible user input for time and temp
-    sprintf(printHUD,
-            "|****|\tMode:%s \n"
-            "|____|\t>Time:%d:%d \n"
-            "|----|\tTemp:%d F\n"
-            "|____|\t\n",
-            ovenData.mode,
-            ovenData.minutes, ovenData.seconds,
-            ovenData.temp);
-    OledDrawString(printHUD);
-    OledUpdate();
+        //Bake HUD with user input on TIME
+        sprintf(printHUD,
+                "|****|\tMode:%s \n"
+                "|____|\t>Time:%d:%d \n"
+                "|----|\tTemp:%d F    \n"
+                "|____|\t\n",
+                ovenData.mode,
+                ovenData.minutes, ovenData.seconds,
+                ovenData.temp);
+        OledDrawString(printHUD);
+        OledUpdate();
+    }
+    if (ovenData.selectOption == TEMP) {
+        //Bake HUD with user input on TEMP
+        sprintf(printHUD,
+                "|****|\tMode:%s \n"
+                "|____|\tTime:%d:%d \n"
+                "|----|\t>Temp:%d   F\n"
+                "|____|\t\n",
+                ovenData.mode,
+                ovenData.minutes, ovenData.seconds,
+                ovenData.temp);
+        OledDrawString(printHUD);
+        OledUpdate();
+    }
 }
 
 void printBroilHUD(OvenData ovenData)
 {
+
     //print broil HUD, no option to change temp, just time, temp is static and visible
     sprintf(printHUD,
             "|****|\tMode:%s \n"
             "|____|\t>Time:%d:%d \n"
-            "|----|\tTemp:350 F\n"
+            "|----|\tTemp:350 F   \n"
             "|____|\t\n",
             ovenData.mode,
             ovenData.minutes, ovenData.seconds);
@@ -247,8 +284,8 @@ void printToastHUD(OvenData ovenData)
     sprintf(printHUD,
             "|****|\tMode:%s \n"
             "|____|\t>Time:%d:%d \n"
-            "|----|\t\n"
-            "|____|\t\n",
+            "|----|              \n"
+            "|____|              \n",
             ovenData.mode,
             ovenData.minutes, ovenData.seconds,
             ovenData.temp);
@@ -260,4 +297,86 @@ void buttonEvent3Down(void)
 {//function that is called when buttonEvent3Down is true
     ovenData.buttonEventStart = ovenData.globalTime; //store time when button 3 pressed
     ovenData.state = SELECTOR_CHANGE_PENDING; //change states from 
+}
+
+void shortPress(void)
+{
+    if (ovenData.mode == "BAKE") { //cycle through modes
+        ovenData.selectOption = TIME; //set to default select option when going to BAKE
+        ovenData.mode = "TOAST";
+    } else if (ovenData.mode == "TOAST") {
+        ovenData.mode = "BROIL";
+    } else {
+        ovenData.mode = "BAKE";
+    }
+}
+
+void longPress(void)
+{
+    if (ovenData.mode == "BAKE") {
+        if (ovenData.selectOption == TIME) { //if TIME currently selected
+            ovenData.selectOption = TEMP; //change to TEMP
+        } else if (ovenData.selectOption == TEMP) { //else if TEMP currently selected
+            ovenData.selectOption = TIME; //change to TIME
+        }
+    } else { //if ovenData.mode is not in BAKE just update the OLED again
+        updateOLED(ovenData);
+    }
+}
+
+void ADCchanged(void)
+{
+    ovenData.adcRead = AdcRead();
+    ovenData.adcRead >> 2;
+
+    //check for selection option 
+    if (ovenData.selectOption == TIME) {
+        ovenData.adcRead + 1;
+        ovenData.initialCookTime = ovenData.adcRead;
+        ovenData.minutes = ovenData.adcRead / 60;
+        ovenData.seconds = ovenData.adcRead % 60;
+        ovenData.state = SETUP;
+    } else if (ovenData.selectOption == TEMP) {
+        ovenData.temp = ovenData.adcRead + 300;
+
+    }
+    ovenData.state = SETUP;
+    updateOLED(ovenData);
+}
+
+void buttonEvent4Down(void)
+{
+    ovenData.buttonEventStart = ovenData.globalTime; //store button4Down event start time
+    updateOLED(ovenData); //update OLED
+    ovenData.state = COOKING; //change state to COOKING
+}
+
+void countdown(void)
+{
+    if (ovenData.initialCookTime > 0) {
+        ovenData.initialCookTime--; //decrement cook time
+        ovenData.minutes = ovenData.initialCookTime / 60; //convert minutes
+        ovenData.seconds = ovenData.initialCookTime % 60; //convert seconds
+        updateOLED(ovenData); //updateOLED
+        ovenData.state = COOKING; //go to COOKING state to continue countdown
+    } else { //countdown is over
+        reset();
+        updateOLED(ovenData);
+        ovenData.state = SETUP; //go back to SETUP
+    }
+}
+
+void reset(void)
+{ //resetting ovenData to initial values
+    ovenData.temp = 0;
+    ovenData.minutes = 0;
+    ovenData.seconds = 0;
+    ovenData.state = SETUP;
+    ovenData.selectOption = TIME;
+}
+
+void button4Pending(void)
+{
+    ovenData.buttonEventStart = ovenData.globalTime; //store time for buttonEventStart
+    ovenData.state = RESET_PENDING; //change to RESET_PENDING
 }
