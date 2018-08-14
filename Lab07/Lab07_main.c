@@ -55,6 +55,9 @@ typedef struct {
     int buttonEventStart; //globalTime storage when button3 is pressed
     int timerEvent; //timer event flag
     int selectOption; //stores our current select option: TIME or TEMP
+    int ledsEighth; //stores an eighth of total cookTime to light proper LED's
+    int ledsCount; //counter for LED's to know if an eighth of the time has passed
+    uint8_t ledsOn; //variable to store the LED_SET() argument value
 
     //add more members to this struct
 } OvenData;
@@ -194,7 +197,7 @@ int main()
 
     //give ovenData initial values
     ovenData.mode = "BAKE";
-    ovenData.temp = 0;
+    ovenData.temp = 350;
     ovenData.minutes = 0;
     ovenData.seconds = 0;
     ovenData.state = SETUP;
@@ -203,7 +206,6 @@ int main()
     while (1) {
         // Add main loop code here
         runOvenSM();
-
     }
 }
 
@@ -327,22 +329,24 @@ void longPress(void)
 void ADCchanged(void)
 {
     ovenData.adcRead = AdcRead(); //add one to adcRead 
-    ovenData.adcRead = ovenData.adcRead >> 2;   //get top 8 bits
+    ovenData.adcRead = ovenData.adcRead >> 2; //get top 8 bits
 
     //check for selection option 
-    if (ovenData.selectOption == TIME) {    //time conversion
-        ovenData.initialCookTime = ovenData.adcRead;    //save cookTime for countdown
-        ovenData.minutes = ovenData.adcRead / 60;   //minutes
-        ovenData.seconds = (ovenData.adcRead % 60)+1;   //seconds
+    if (ovenData.selectOption == TIME) { //time conversion
+        ovenData.initialCookTime = ovenData.adcRead; //save cookTime for countdown
+        ovenData.ledsEighth = (ovenData.initialCookTime)*(1 / 8);
+        ovenData.minutes = ovenData.adcRead / 60; //minutes
+        ovenData.seconds = (ovenData.adcRead % 60) + 1; //seconds
     } else if (ovenData.selectOption == TEMP) { //temperature conversion
         ovenData.temp = ovenData.adcRead + 300;
     }
     ovenData.state = SETUP; //go back to SETUP
-    updateOLED(ovenData);   //update OLED
+    updateOLED(ovenData); //update OLED
 }
 
 void buttonEvent4Down(void)
 {
+    ovenData.ledsOn = 0b11111111; //give ledsOn the full LED value
     ovenData.buttonEventStart = ovenData.globalTime; //store button4Down event start time
     updateOLED(ovenData); //update OLED
     ovenData.state = COOKING; //change state to COOKING
@@ -355,21 +359,29 @@ void countdown(void)
         ovenData.minutes = ovenData.initialCookTime / 60; //convert minutes
         ovenData.seconds = ovenData.initialCookTime % 60; //convert seconds
         updateOLED(ovenData); //updateOLED
+        LEDS_SET(ovenData.ledsOn); //turn on appropriate LED's
+        ovenData.ledsCount++;
+        if (ovenData.ledsCount == ovenData.ledsEighth) { //if ledsCount reaches an eighth of the total, reset the count and update the LED bar
+            ovenData.ledsCount = 0; //reset ledsCount
+            ovenData.ledsOn = ovenData.ledsOn >> 1; //shift the bits to show an eighth of the time has passed
+        }
         ovenData.state = COOKING; //go to COOKING state to continue countdown
     } else { //countdown is over
         reset();
         updateOLED(ovenData);
         ovenData.state = SETUP; //go back to SETUP
     }
+
 }
 
 void reset(void)
-{ //resetting ovenData to initial values
-    ovenData.temp = 350;
-    ovenData.minutes = 0;
-    ovenData.seconds = 1;
-    ovenData.state = SETUP;
-    ovenData.selectOption = TIME;
+{ //resetting ovenData to initial values: MODE default not included, reset should go back to same MODE it was in before
+    ovenData.temp = 350; //reset temp to 350: BAKE only
+    ovenData.minutes = 0; //reset minutes to zero
+    ovenData.seconds = 1; //reset seconds to one
+    ovenData.state = SETUP; //go back to SETUP state
+    ovenData.selectOption = TIME; //reset select option to time
+    LEDS_SET(0); //reset LEDs to off
 }
 
 void button4Pending(void)
@@ -377,3 +389,4 @@ void button4Pending(void)
     ovenData.buttonEventStart = ovenData.globalTime; //store time for buttonEventStart
     ovenData.state = RESET_PENDING; //change to RESET_PENDING
 }
+
