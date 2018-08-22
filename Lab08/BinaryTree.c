@@ -1,6 +1,6 @@
 /*
  * File:   BinaryTree.c
- * Author: Jose Luis Santiago
+ * Author: Jose Luis Santiago jlsantia@ucsc.edu
  *
  * Created on August 16, 2018, 2:12 PM
  */
