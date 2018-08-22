@@ -22,20 +22,20 @@ Node *TreeCreate(int level, const char *data)
         return NULL;
     }
 
-    //if we reach our base case(level = 0): give make the leaves NULL
-    if (level == 0) {
-        root->leftChild = NULL;
-        root->rightChild = NULL;
-    } else {
-        //give our root node our data
-        root->data = *data;
-
+    //give our root node our data
+    root->data = *data;
+    
+    //if we have yet to hit our base case
+    if (level > 1) {
         //create a right and left child for our root node calling TreeCreate(); recursively
         root->rightChild = TreeCreate(level - 1, data + (1 << (level - 1))); //data + 2^(level-1) to get appropriate order of string format for rightChild's
         root->leftChild = TreeCreate(level - 1, data + 1); //create left branch
 
+    } else {    //we have hit our base case, create NULL leaves
+        root->leftChild = NULL;
+        root->rightChild = NULL;
     }
-    return root;
+    return root;    //return root
 }
 
 void TreePrint(Node *node, int space)
@@ -43,7 +43,7 @@ void TreePrint(Node *node, int space)
     int i;
     if (node == NULL) {
         return;
-    } else {
+    } else{
         space = space + LEVEL_SPACES; //increment space by LEVEL_SPACES depending on current level
         TreePrint(node->rightChild, space); //print right branch
         printf("\n"); //print new line
@@ -54,5 +54,23 @@ void TreePrint(Node *node, int space)
             printf("%c", node->data);
         }
         TreePrint(node->leftChild, space); //print left branch
+    }
+}
+
+Node *GetLeftChild(Node *root)
+{
+    if (root->leftChild == NULL) { //if no leftChild, return NULL
+        return NULL;
+    } else { //else return pointer to leftChild
+        return root->leftChild;
+    }
+}
+
+Node *GetRightChild(Node *root)
+{
+    if (root->rightChild == NULL) { //if no rightChild, return NULL
+        return NULL;
+    } else {    //else return rightChild
+        return root->rightChild;
     }
 }
