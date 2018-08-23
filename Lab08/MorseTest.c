@@ -19,6 +19,7 @@
 int checkMorseInit;
 static MorseEvent morseEvent;
 
+
 int main()
 {
     BOARD_Init();
@@ -46,9 +47,9 @@ int main()
     morseEventTest = MorseDecode(morseEventTest);
 
     if (morseEventTest.type == MORSE_EVENT_NONE) {
-        printf("MorseDecode(); Test 1/4 passed\n");
+        printf("MorseDecode(); test 1/7 passed\n");
     } else {
-        printf("MorseDecode(); Test 1/4 passed\n");
+        printf("MorseDecode(); Test 1/7 passed\n");
     }
 
     morseEventTest.type = MORSE_EVENT_NEW_LETTER;
@@ -56,9 +57,9 @@ int main()
     morseEventTest = MorseDecode(morseEventTest);
 
     if (morseEventTest.type == MORSE_EVENT_CHAR_DECODED) {
-        printf("MorseDecode(); test 2/4 passed\n");
+        printf("MorseDecode(); test 2/7 passed\n");
     } else {
-        printf("MorseDecode(); test 2/4 failed\n");
+        printf("MorseDecode(); test 2/7 failed\n");
     }
 
 
@@ -83,9 +84,9 @@ int main()
     morseEventTest = MorseDecode(morseEventTest);
 
     if (morseEventTest.type == MORSE_EVENT_CHAR_DECODED) {
-        printf("MorseDecode(); test 3/4 passed\n");
+        printf("MorseDecode(); test 3/7 passed\n");
     } else {
-        printf("MorseDecode(); test 3/4 failed\n");
+        printf("MorseDecode(); test 3/7 failed\n");
     }
 
     //testing edge case to see "#"    
@@ -112,9 +113,9 @@ int main()
     printf("We are expecting a W: %c\n", morseEventTest.parameter);
 
     if (morseEventTest.type == MORSE_EVENT_ERROR) {
-        printf("MorseDecode(); Test 4/4 passed\n");
+        printf("MorseDecode(); test 4/7 passed\n");
     } else {
-        printf("MorseDecode(); Test 4/4 failed\n");
+        printf("MorseDecode(); Test 4/7 failed\n");
     }
     printf("We got our invalid character(#) indicator: %c\n", morseEventTest.parameter);
 
@@ -123,10 +124,22 @@ int main()
 
     morseEventTest = MorseDecode(morseEventTest);
 
+    if(morseEventTest.type == MORSE_EVENT_NONE){
+        printf("MorseDecode(); test 5/7 passed\n");
+    }else{
+        printf("MorseDecode(); test 5/7 failed\n");
+    }
+    
     morseEventTest.type = MORSE_EVENT_DASH;
 
     morseEventTest = MorseDecode(morseEventTest);
 
+    if(morseEventTest.type == MORSE_EVENT_NONE){
+        printf("MorseDecode(); test 6/7 passed\n");
+    }else{
+        printf("MorseDecode(); test 6/7 failed\n");
+    }
+    
     morseEventTest.type = MORSE_EVENT_DOT;
 
     morseEventTest = MorseDecode(morseEventTest);
@@ -148,9 +161,9 @@ int main()
     morseEventTest = MorseDecode(morseEventTest);
 
     if (morseEventTest.type == MORSE_EVENT_ERROR) {
-        printf("MorseDecode(); test 5/5 passed\n");
+        printf("MorseDecode(); test 7/7 passed\n");
     } else {
-        printf("MorseDecode(); test 5/5 failed\n");
+        printf("MorseDecode(); test 7/7 failed\n");
     }
 
 
