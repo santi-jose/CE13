@@ -106,7 +106,7 @@ MorseEvent MorseDecode(MorseEvent input_event)
         return input_event;
     }
 
-    //input_event.type = MORSE_EVENT_NONE; //MORSE_EVENT_NONE if no decoding or traversal error
+    input_event.type = MORSE_EVENT_NONE; //MORSE_EVENT_NONE if no decoding or traversal error
     return input_event; //return after successful traversal
 }
 
