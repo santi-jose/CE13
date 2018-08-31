@@ -1,6 +1,6 @@
 /*
  * File:   MessageTest.c
- * Author: Jose Luis Santiago jlsantia@ucsc.edu
+ * Author:Karla Alvarado            email: kaaalvar@ucsc.edu
  *
  * Created on August 24, 2018, 5:27 PM
  */
