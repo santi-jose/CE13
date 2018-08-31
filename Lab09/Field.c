@@ -1,3 +1,6 @@
+//Karla Alvarado            email: kaaalvar@ucsc.edu
+
+
     #include <stdint.h>
 #include "BOARD.h"
 #include "Field.h"
