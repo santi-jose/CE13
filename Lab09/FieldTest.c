@@ -1,4 +1,4 @@
-//Karla Alvarado            email: kaaalvar@ucsc.edu
+//Jose Santiago jlsantia@ucsc.edu
 
 // **** Include libraries here ****
 // Standard libraries
