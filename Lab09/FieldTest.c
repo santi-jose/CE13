@@ -1,3 +1,5 @@
+//Karla Alvarado            email: kaaalvar@ucsc.edu
+
 // **** Include libraries here ****
 // Standard libraries
 #include <stdio.h>
