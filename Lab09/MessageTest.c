@@ -107,7 +107,7 @@ int main(void)
 
     printf("Message_Encode returned:%safter being fed(RES,4,7,2). Checksum should be 75.\n",encodedMessage1);
     
-    printf("Length of encodedMessage1 =%d\n",encodeTest1);
+    printf("Length of encodedMessage1 = %d\n",encodeTest1);
     
     //new testMessage variable with new values to test Message_Encode again
     Message testMessage2;
@@ -121,9 +121,55 @@ int main(void)
     
     encodeTest2 = Message_Encode(encodedMessage2,testMessage2);
     
-    printf("Message_Encode returned:%safter being fed (SHO,2,5). Checksum should be 60.\n",encodedMessage2);
+    printf("Message_Encode returned:%safter being fed (SHO,2,5). Checksum should be 53.\n",encodedMessage2);
     
-    printf("Length of encodedMessage2 =%d",encodeTest2);
+    printf("Length of encodedMessage2 = %d\n",encodeTest2);
+    
+//********BEGIN MESSAGE_DECODE TESTING***************************************************
+    BB_Event *decodeData = (BB_Event *)malloc(sizeof(BB_Event));
+    int decodeTest;
+    decodeTest = Message_Decode('$',decodeData);
+    
+    if(decodeTest){
+        printf("Success, Message_Decode returned SUCCESS\n");
+    }else{
+        printf("Failure\n");
+    }
+    
+    //pass in our payload
+    
+    decodeTest = Message_Decode('R',decodeData);
+    
+    decodeTest = Message_Decode('E',decodeData);
+    
+    decodeTest = Message_Decode('S',decodeData);
+    
+    decodeTest = Message_Decode(',',decodeData);
+    
+    decodeTest = Message_Decode('4',decodeData);
+    
+    decodeTest = Message_Decode(',',decodeData);
+    
+    decodeTest = Message_Decode('7',decodeData);
+    
+    decodeTest = Message_Decode(',',decodeData);
+    
+    decodeTest = Message_Decode('2',decodeData);
+    
+    decodeTest = Message_Decode('*',decodeData);
+    
+    decodeTest = Message_Decode('7',decodeData);
+    
+    decodeTest = Message_Decode('5',decodeData);
+    
+    decodeTest = Message_Decode('\n',decodeData);
+
+    if((decodeData->type == BB_EVENT_RES_RECEIVED)){
+        printf("MessageDecode successfully decoded message\n");
+    }else{
+        printf("MessageDecode failed\n");
+    }
     
     while (1);
+    
 }
