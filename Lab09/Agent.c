@@ -1,3 +1,5 @@
+//Karla Alvarado            email: kaaalvar@ucsc.edu
+
 
 #include "Agent.h"
 #include "Oled.h"
